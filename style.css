@@ -14,6 +14,7 @@
   --line: #b8c8e0;
   --surface: #e6eefa;      /* tint of bg for cards and tables */
   --on-dark: #d3ddf6;      /* text on blue or navy blocks */
+  --gold: #d4b250;         /* tie gold: small details only, on dark or blue backgrounds */
 
   --display: "InterVariable", "Inter Display", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --body: "InterVariable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -53,7 +54,7 @@ nav .btn:hover { color: #fff; }
 .actions { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
 .photo { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 4 / 5; background: var(--accent-soft); }
 .photo img { width: 100%; height: 100%; object-fit: cover; }
-.badge { position: absolute; left: 18px; bottom: 18px; background: var(--surface); border-radius: 16px; padding: 12px 16px; font-size: 14px; line-height: 1.35; box-shadow: 0 8px 24px rgba(18, 38, 72, .16); }
+.badge { position: absolute; left: 18px; bottom: 18px; background: var(--surface); border-radius: 16px; padding: 12px 16px 12px 14px; border-left: 3px solid var(--gold); font-size: 14px; line-height: 1.35; box-shadow: 0 8px 24px rgba(18, 38, 72, .16); }
 .badge b { display: block; font-size: 15px; }
 
 /* Home: journey */
@@ -63,7 +64,7 @@ nav .btn:hover { color: #fff; }
 .stops { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; position: relative; }
 .stops::before { content: ""; position: absolute; top: 13px; left: 6px; right: 6px; height: 2px; background: rgba(255, 255, 255, .28); }
 .stops li { position: relative; padding-top: 42px; }
-.stops li::before { content: ""; position: absolute; top: 6px; left: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--on-dark); box-shadow: 0 0 0 5px var(--accent); }
+.stops li::before { content: ""; position: absolute; top: 6px; left: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 5px var(--accent); }
 .stops li.now::before { background: #fff; }
 .stops .place { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.2; }
 .stops .when { font-size: 13px; color: var(--on-dark); margin: 2px 0 8px; }
@@ -78,14 +79,14 @@ nav .btn:hover { color: #fff; }
 a.card:hover { border-color: var(--accent); }
 .card.feature { grid-row: span 2; background: var(--ink); color: #fff; border: 0; }
 .tag { align-self: flex-start; font-size: 13px; font-weight: 600; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-bottom: 18px; }
-.card.feature .tag { background: var(--accent-soft); color: var(--accent); }
-.tag.gold { background: var(--accent); color: #fff; }
+.card.feature .tag { background: var(--gold); color: var(--ink); }
+.tag.gold { background: var(--gold); color: var(--ink); }
 .card h3 { font-family: var(--display); font-weight: 700; font-size: 23px; line-height: 1.2; letter-spacing: -.015em; margin: 0 0 10px; }
 .card.feature h3 { font-size: 34px; letter-spacing: -.025em; }
 .card p { margin: 0; color: var(--muted); font-size: 15.5px; }
 .card.feature p { color: var(--on-dark); font-size: 17px; max-width: 40ch; }
 .card .more { margin-top: auto; padding-top: 26px; font-weight: 600; font-size: 15px; color: var(--accent); }
-.card.feature .more { color: var(--accent-soft); }
+.card.feature .more { color: var(--gold); }
 .facts { display: flex; gap: 28px; margin-top: 28px; flex-wrap: wrap; }
 .facts div { font-size: 14px; color: var(--on-dark); }
 .facts b { display: block; font-family: var(--display); font-size: 22px; color: #fff; }
@@ -107,7 +108,7 @@ footer { color: var(--muted); font-size: 14px; padding: 0 0 40px; }
 .p-meta b { display: block; font-family: var(--display); font-size: 19px; color: var(--ink); }
 
 .answer { background: var(--ink); color: #fff; border-radius: 24px; padding: 32px; margin-bottom: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.answer .label { font-size: 14px; color: var(--on-dark); margin: 0 0 4px; }
+.answer .label { font-size: 14px; color: var(--gold); margin: 0 0 4px; }
 .answer .value { font-family: var(--display); font-weight: 700; font-size: 26px; margin: 0; }
 .answer .value.pending { color: var(--on-dark); font-weight: 500; font-size: 18px; font-style: italic; }
 
