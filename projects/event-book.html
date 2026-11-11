@@ -31,7 +31,7 @@
   </div>
 
   <div class="p-meta">
-    <div><b>2 open</b>Richemont and Rémy Cointreau</div>
+    <div><b>3 open</b>Burberry, Richemont, Rémy Cointreau</div>
     <div><b>0 scored</b>Calls with a result</div>
     <div><b>Brier score</b>How I score probabilities</div>
   </div>
@@ -39,7 +39,97 @@
   <section class="block" aria-labelledby="how-h">
     <h2 id="how-h">How it works</h2>
     <p><b>Before the release</b> I publish four things: the move the options price for the day, how the stock moved on past results days, the evidence for and against, and a probability for each question. Every page is committed to a public GitHub repository, so the time stamp shows it was written beforehand.</p>
+    <p><b>Reading the options.</b> A straddle is a call and a put at the same strike, so it pays off if the stock moves far in either direction. Its price, as a share of the stock price, is roughly the move the market expects. When the first option expiry after the release also covers some normal days, I take out the variance of those normal days to isolate the results day. Then I compare that number with how the stock actually moved on past results days. If history moved more than the options price, the options look cheap, but only if the gap is wider than the bid-ask spread.</p>
     <p><b>After the release</b> each probability gets a Brier score: the squared gap between my probability and what happened (1 if it happened, 0 if not). Zero is perfect, and always saying 50% scores 0.25. Below 0.25 means the calls added something.</p>
+  </section>
+
+  <section class="block" aria-labelledby="brby-h">
+    <span class="tag gold">Open call, written 11 Nov 2026</span>
+    <h2 id="brby-h" style="margin-top:14px">Burberry, half-year results, 12 November 2026</h2>
+    <p>Burberry is two years into a turnaround under its CEO, Joshua Schulman. The results come out at 07:00 London time on Thursday 12 November and cover the six months to late September. The key new number is comparable store sales for July to September, the second quarter of its financial year. The shares traded at about 1,094p on 11 November (London Stock Exchange, ticker BRBY).</p>
+
+    <div class="answer">
+      <div>
+        <p class="label">What the options price</p>
+        <p class="value">A move of about 4.6% on the day.</p>
+      </div>
+      <div>
+        <p class="label">What history says</p>
+        <p class="value">6.9% on average, 5.3% median. Cheap at the mid price, but the spread eats the edge.</p>
+      </div>
+    </div>
+
+    <h3 class="sub-h">What the options price</h3>
+    <p>Burberry options trade on ICE Futures Europe. The first expiry after the release is Friday 20 November, so the option covers the results day plus six normal trading days. Delayed quotes for the 1,100p strike on 11 November:</p>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>20 November, 1,100p strike</th><th class="num">Bid</th><th class="num">Mid</th><th class="num">Ask</th></tr></thead>
+        <tbody>
+          <tr><td>Call</td><td class="num">24.0p</td><td class="num">29.8p</td><td class="num">35.5p</td></tr>
+          <tr><td>Put</td><td class="num">30.0p</td><td class="num">35.5p</td><td class="num">41.0p</td></tr>
+          <tr><td>Straddle (call + put)</td><td class="num">54.0p</td><td class="num">65.3p</td><td class="num">76.5p</td></tr>
+          <tr><td>Straddle as % of the share price</td><td class="num">4.9%</td><td class="num">6.0%</td><td class="num">7.0%</td></tr>
+          <tr><td><b>Implied move on results day</b></td><td class="num">3.1%</td><td class="num"><b>4.6%</b></td><td class="num">5.9%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>How I get from 6.0% to 4.6%.</b> The straddle prices the whole period to 20 November, not just Thursday. Six normal days at Burberry's recent daily volatility (1.9%, from the last 30 days) account for part of the price. Taking their variance out of the total leaves an expected move of about 4.6% for the results day itself.</p>
+    <p><b>How much I trust it.</b> Not much. The quotes are delayed, the spread is wide, and open interest at this strike is close to zero, so the range runs from 3.1% to 5.9% depending on where you trade. Implied volatility for the stock is about 34% a year against about 31% realised over the last 30 days, so the options charge only a small premium for the event.</p>
+
+    <h3 class="sub-h">What history says</h3>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Results and trading-update days, 2022 to 2026</th><th class="num">Average absolute move</th></tr></thead>
+        <tbody>
+          <tr><td>All 19 days (median 5.3%)</td><td class="num">6.9%</td></tr>
+          <tr><td>November half-year results (+2.0%, −10.4%, +19.3%, −3.5%)</td><td class="num">8.8%</td></tr>
+          <tr><td>Since the turnaround plan, January 2025 onwards (7 days)</td><td class="num">7.3%</td></tr>
+          <tr><td>The last four (−3.5%, +5.3%, −7.3%, −4.8%)</td><td class="num">5.2%</td></tr>
+          <tr><td>A normal day</td><td class="num">1.7%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>12 of the 19 days moved more than the 4.6% priced. But 2024 and early 2025 were extreme: a profit warning, a CEO change and the new plan. The last four days averaged 5.2%, closer to the price.</p>
+    <p><b>Would I buy the straddle?</b> At the mid price, it breaks even if the stock ends more than about 6% away from 1,100p by 20 November. Results days alone did that 8 times out of 19. At the ask, it needs about 7%, which happened 6 times out of 19. The options look cheap against the full history, but not by enough to pay the spread on quotes I cannot trade live. So no trade: the view goes into the last probability below instead.</p>
+
+    <h3 class="sub-h">The evidence</h3>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Factor</th><th>What the data says</th><th>Points to</th></tr></thead>
+        <tbody>
+          <tr><td>Momentum</td><td>Comparable store sales went −1%, +2%, +3%, +5% over the last four quarters. Outerwear grew double digits in April to June.</td><td>Stronger</td></tr>
+          <tr><td>Comparison base</td><td>Last year's second quarter grew 2%, against −1% in the first. In Greater China the base is 7 points harder: +3% against −4%.</td><td>Weaker</td></tr>
+          <tr><td>Greater China</td><td>+9% in April to June, driven by local buyers and Gen Z. Hong Kong clothing sales rose 11% in September. Moncler grew 5% in Asia in July to September. LVMH's fashion sales fell 5%, partly on weaker demand in China.</td><td>Mixed</td></tr>
+          <tr><td>Americas</td><td>+12% in April to June. LVMH saw strong US fashion demand in July to September, but Moncler's Americas growth slowed to 2% on lower summer traffic.</td><td>Mixed</td></tr>
+          <tr><td>Europe and Middle East</td><td>−3% in April to June (−1% without the Middle East). Moncler's sales in Europe fell 8% in July to September, as tourist spending weakened.</td><td>Weaker</td></tr>
+          <tr><td>Peers</td><td>Hermès slowed from 6.1% to 4.3%, Gucci −6%, Miu Miu −3%, Prada +1%.</td><td>Weaker</td></tr>
+          <tr><td>Profit</td><td>£80m of the £100m cost savings were already delivered last year. Wholesale guidance for the half was raised to high single digits. Currency is a £10m headwind for the year. Profit is weighted to the second half.</td><td>Neutral</td></tr>
+          <tr><td>Positioning</td><td>Shares are up about 8% since early October (1,011p to 1,094p). They fell on the last two results days; in July the numbers were in line, but growth did not accelerate. Brokers are split: UBS Buy at 1,320p, RBC Sector Perform at 1,200p.</td><td>Weaker</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>What I saw in China.</b> Burberry is very visible in Shanghai: stores across the city, and people like to be seen wearing it. Fakes are getting more common, which tells me the brand is wanted. Younger buyers go for the puffers and belts. Wealthier men and women buy the clothing, scarves, shoes and bags. Burberry itself credits Gen Z for its China growth, which matches what I saw.</p>
+    <p><b>Two limits on that view.</b> Fakes show demand for the brand, not sales for Burberry; some of that demand never reaches a Burberry till. And most puffer sales come after September, so they matter more for the January update than for this quarter. What my view does support is that China growth is real demand, not a one-quarter bounce. That is why I put the China question at 50% even though the base is 7 points harder.</p>
+
+    <h3 class="sub-h">My probabilities</h3>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Question</th><th class="num">Probability</th><th>Reasoning</th></tr></thead>
+        <tbody>
+          <tr><td>Second-quarter comparable store sales grow 5% or more</td><td class="num"><b>35%</b></td><td>Matching the first quarter on a base 3 points harder, while peers slowed and Europe weakened. UBS expects +4%. Holding the two-year trend would give only about +2%.</td></tr>
+          <tr><td>Greater China comparable store sales grow 5% or more</td><td class="num"><b>50%</b></td><td>The base alone would pull +9% down to about +2%. Gen Z demand, what I saw in Shanghai, Hong Kong clothing data and Moncler's Asia growth say the trend is stronger than that. LVMH and Gucci say the opposite.</td></tr>
+          <tr><td>Half-year adjusted operating profit above £39m</td><td class="num"><b>50%</b></td><td>£39m is UBS's estimate, against £19m last year. Cost savings and stronger wholesale help; currency and marketing spend hurt. No lean.</td></tr>
+          <tr><td>Shares close higher on Thursday</td><td class="num"><b>45%</b></td><td>9 of 19 results days were up. If sales grow 5% or more, I give a rise 75%; if not, 30%. 35% × 75% + 65% × 30% ≈ 46%.</td></tr>
+          <tr><td>The move is larger than the 4.6% priced</td><td class="num"><b>55%</b></td><td>12 of 19 past days beat it, but the recent days were calmer. If the options are fairly priced, the chance would be about 42%.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-h">What would prove me wrong</h3>
+    <p>Second-quarter growth of 6% or more with China still near 9%, which would mean the base effect did not bite. Or Europe back to growth, which would mean the tourist slowdown is over.</p>
+
+    <h3 class="sub-h">Result</h3>
+    <p class="pending">To be added after 12 November: actual figures, the move on the day, and a Brier score for each probability.</p>
   </section>
 
   <section class="block" aria-labelledby="cfr-h">
@@ -102,8 +192,9 @@
 
   <section class="block" aria-labelledby="next-h">
     <h2 id="next-h">Coming up</h2>
-    <p>Rémy Cointreau on 25 November: an open call, written on 7 November, in the <a href="remy-cointreau.html">full pitch</a>. Then Richemont's third-quarter sales on 14 January and H&amp;M on 28 January.</p>
-    <p class="pending">Sources: company releases (Richemont Q1 FY27, H1 FY26 and FY26), Hong Kong Census and Statistics Department via news.gov.hk and The Standard, LVMH and Hermès third-quarter releases via FashionUnited, Federation of the Swiss Watch Industry via cash.ch, World Gold Council via APA, Ad-hoc-news (6 Nov 2026). Prices and option quotes: Interactive Brokers, delayed.</p>
+    <p>Rémy Cointreau on 25 November: an open call, written on 7 November, in the <a href="remy-cointreau.html">full pitch</a>. Then Richemont's third-quarter sales on 14 January, Burberry's third-quarter update in late January (when the puffer season shows up), and H&amp;M on 28 January.</p>
+    <p class="pending">Burberry sources: company releases (Q1 FY27, FY26 and H1 FY26), UBS note via Yahoo Finance (5 Oct 2026), RBC via Ad-hoc-news, Morningstar via Retail Times, Hong Kong Census and Statistics Department via China Daily, LVMH, Moncler, Kering, Hermès and Prada releases via FashionUnited and Inside Retail. Results-day dates checked against company releases and trading volume.</p>
+    <p class="pending">Richemont sources: company releases (Richemont Q1 FY27, H1 FY26 and FY26), Hong Kong Census and Statistics Department via news.gov.hk and The Standard, LVMH and Hermès third-quarter releases via FashionUnited, Federation of the Swiss Watch Industry via cash.ch, World Gold Council via APA, Ad-hoc-news (6 Nov 2026). Prices and option quotes: Interactive Brokers, delayed.</p>
   </section>
 
   <footer>© 2026 Saul González. Nothing on this site is investment advice.</footer>
