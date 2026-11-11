@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>News triage | Saul González</title>
+  <meta name="description" content="A live experiment: a free AI labels headlines about 40 large European companies, and every label is scored against what the shares actually did.">
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="../style.css?v=20261111b">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="../index.html">saul<span>.</span>gonzález</a>
+    <nav aria-label="Main">
+      <a href="../index.html#journey">About</a>
+      <a href="../index.html#research">Research</a>
+      <a class="btn" href="../index.html#contact">Get in touch</a>
+    </nav>
+  </header>
+</div>
+
+<main class="wrap narrow">
+  <a class="back" href="../index.html#research">Back to research</a>
+
+  <div class="p-head">
+    <span class="tag gold">Live experiment</span>
+    <h1>Can a free AI tell which headlines move a stock?</h1>
+    <p class="lead">Four times a day, a free AI model reads the news about 40 large European companies and says which headlines will move the shares, in which direction, and by how much. Every evening the calls are checked against what the market actually did. Nothing is tested on old news, so the model cannot already know the ending.</p>
+  </div>
+
+  <div class="p-meta" id="meta">
+    <div><b id="m-read">…</b>Headlines read</div>
+    <div><b id="m-flag">…</b>Called as market-moving</div>
+    <div><b id="m-scored">…</b>Company-days scored</div>
+    <div><b id="m-upd">…</b>Last update</div>
+  </div>
+
+  <nav class="subnav" aria-label="On this page">
+    <a href="#answer">The answer</a>
+    <a href="#how">How it works</a>
+    <a href="#feed">Live feed</a>
+    <a href="#scorecard">Scorecard</a>
+    <a href="#limits">Limits</a>
+  </nav>
+
+  <section id="answer" class="block">
+    <div class="answer">
+      <div>
+        <p class="label">When the AI says a headline will move a stock</p>
+        <p class="value" id="a-model">…</p>
+      </div>
+      <div>
+        <p class="label">The same question for a simple keyword list</p>
+        <p class="value" id="a-base">…</p>
+      </div>
+    </div>
+    <p class="note" id="a-note"></p>
+
+    <h3 class="sub-h">Is the AI an optimist?</h3>
+    <p>Of the headlines it calls, how many it says go up or down, against how the stocks actually moved on those days.</p>
+    <div class="bias" id="bias"></div>
+  </section>
+
+  <section id="how" class="block">
+    <h2>How it works</h2>
+    <ol class="flow">
+      <li><span class="n">1</span><b>Collect</b>Every six hours, new English headlines for each company from Google News and Yahoo Finance.</li>
+      <li><span class="n">2</span><b>Label</b>Gemini 3.5 Flash-Lite, on Google's free tier, reads each headline and answers: is it relevant, which way, how big, will volatility rise.</li>
+      <li><span class="n">3</span><b>Commit</b>Labels are saved to a public GitHub repository before the market closes, so the time stamp proves they came first.</li>
+      <li><span class="n">4</span><b>Score</b>After the close: the stock's move against the European market, in units of its own normal daily move.</li>
+    </ol>
+    <div class="funnel" id="funnel"></div>
+    <p>A move counts as <b>notable</b> above one normal day and <b>big</b> above two. "Normal" is each stock's own: 2% is big for Nestlé and noise for Rolls-Royce. The prompt is frozen as <a href="https://github.com/sagonz126/news-triage/blob/main/prompts/label_v1.txt">version 1</a>; any change starts a new, separately scored experiment.</p>
+  </section>
+
+  <section id="feed" class="block">
+    <h2>Live feed</h2>
+    <p>The latest headlines the AI judged relevant, newest first. Outcomes appear once the stock's next close is in.</p>
+    <div class="filters" role="group" aria-label="Filter the feed">
+      <input type="search" id="f-q" placeholder="Search headlines" aria-label="Search headlines">
+      <select id="f-co" aria-label="Company"><option value="">All companies</option></select>
+      <div class="chips" id="f-chips">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="flag" aria-pressed="false">Market-moving</button>
+        <button type="button" data-f="up" aria-pressed="false">▲ Up</button>
+        <button type="button" data-f="down" aria-pressed="false">▼ Down</button>
+        <button type="button" data-f="scored" aria-pressed="false">Scored</button>
+      </div>
+    </div>
+    <ul class="calls" id="calls"></ul>
+    <button type="button" class="btn ghost more-btn" id="more">Show more</button>
+  </section>
+
+  <section id="scorecard" class="block">
+    <h2>Scorecard</h2>
+    <p>One row per question, one column per contender. "Always no move" is the lazy benchmark: most days are quiet, so it wins on raw accuracy and never catches anything. The AI earns its keep on the first three rows.</p>
+    <div class="chips seg" id="s-sample" role="group" aria-label="Sample">
+      <button type="button" data-s="all" aria-pressed="true">All scored days</button>
+      <button type="button" data-s="pre_close" aria-pressed="false">Only labels made before the close</button>
+    </div>
+    <div class="table-card"><table id="score-table"></table></div>
+  </section>
+
+  <section id="limits" class="block">
+    <h2>Limits, and what went wrong</h2>
+    <p><b>It reads news, it does not trade it.</b> A story often reaches Google News after the market has started to react, so this measures how well the AI reads headlines, not a strategy anyone could run.</p>
+    <p><b>Matching is noisy.</b> "Shell", "SAP" and "ABB" are common words, and searches return lifestyle pieces and option-chart pages. The AI's first job is to throw those out; on day one it rejected 41% of what came in.</p>
+    <p><b>Market-adjusted, not risk-adjusted.</b> Moves are measured against the STOXX Europe 600 with a beta of one.</p>
+    <p><b>Day one, 11 November 2026.</b> The first news source, GDELT, refused almost every request from GitHub's servers ("too many requests"), so I switched to Google News and Yahoo Finance. The first model timed out on batches of 60 headlines; the pipeline now uses the faster Flash-Lite in batches of 25. Yahoo no longer serves one of Roche's share lines, so Roche uses the other. All of it is in the commit history.</p>
+    <p class="pending">Code, data and every label: <a href="https://github.com/sagonz126/news-triage">github.com/sagonz126/news-triage</a>. News: Google News RSS and Yahoo Finance. Prices: Yahoo Finance. Nothing here is investment advice.</p>
+  </section>
+
+  <footer>© 2026 Saul González. Nothing on this site is investment advice.</footer>
+</main>
+
+<script>
+(() => {
+  const SRC = "https://raw.githubusercontent.com/sagonz126/news-triage/main/results/site.json";
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => (n ?? 0).toLocaleString("en-GB");
+  const pct = (x) => (x == null ? "n/a" : Math.round(x * 100) + "%");
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  let data, shown = 20, filter = "all", sample = "all";
+
+  function ago(iso) {
+    const m = Math.round((Date.now() - new Date(iso)) / 60000);
+    if (m < 60) return m + " min ago";
+    if (m < 48 * 60) return Math.round(m / 60) + " h ago";
+    return Math.round(m / 1440) + " days ago";
+  }
+
+  function hit(c) {
+    if (c.z == null) return null;
+    const flagged = c.size !== "noise", moved = c.act_size !== "noise";
+    if (!flagged) return !moved;
+    if (!moved) return false;
+    return c.dir === "none" || c.dir === c.act_dir;
+  }
+
+  function renderTop() {
+    const t = data.totals, s = data.score;
+    $("m-read").textContent = fmt(t.headlines);
+    $("m-flag").textContent = fmt(t.flagged);
+    $("m-scored").textContent = fmt(s?.company_days_scored ?? 0);
+    $("m-upd").textContent = ago(data.updated_utc);
+    const m = s?.all?.llm, b = s?.all?.keyword_baseline;
+    if (m && m.n) {
+      $("a-model").textContent = `The stock moved ${pct(m.move_precision)} of the time.`;
+      $("a-base").textContent = `${pct(b.move_precision)} of the time.`;
+      const since = new Date(data.start_date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+      $("a-note").textContent = `The AI caught ${pct(m.move_recall)} of the days that moved; the keyword list caught ${pct(b.move_recall)}. Based on ${fmt(m.n)} company-days since ${since}. Small samples swing a lot, so read this as a first look.`;
+    } else {
+      $("a-model").className = $("a-base").className = "value pending";
+      $("a-model").textContent = "First score after tonight's European close.";
+      $("a-base").textContent = "Same: the benchmark is scored on the same days.";
+    }
+    const f = [["Headlines read", t.headlines], ["Judged relevant", t.relevant], ["Called market-moving", t.flagged], ["Company-days scored", s?.company_days_scored ?? 0]];
+    $("funnel").innerHTML = f.map(([k, v]) =>
+      `<div class="f-row"><span>${k}</span><div class="f-bar"><i style="width:${Math.max(2, (v / t.headlines) * 100)}%"></i></div><b>${fmt(v)}</b></div>`).join("");
+    const bar = (label, c) => {
+      const tot = (c.up || 0) + (c.down || 0) + (c.none || 0);
+      if (!tot) return `<div class="b-row"><span>${label}</span><div class="b-bar empty">Waiting for the first close</div></div>`;
+      const w = (k) => ((c[k] || 0) / tot) * 100;
+      return `<div class="b-row"><span>${label}</span><div class="b-bar">
+        <i class="up" style="width:${w("up")}%">${w("up") >= 9 ? "▲ " + Math.round(w("up")) + "%" : ""}</i>
+        <i class="none" style="width:${w("none")}%">${w("none") >= 9 ? "flat " + Math.round(w("none")) + "%" : ""}</i>
+        <i class="down" style="width:${w("down")}%">${w("down") >= 9 ? "▼ " + Math.round(w("down")) + "%" : ""}</i></div></div>`;
+    };
+    $("bias").innerHTML = bar("AI predicts", data.bias.predicted) + bar("What happened", data.bias.actual);
+  }
+
+  function renderFeed() {
+    const q = $("f-q").value.trim().toLowerCase(), co = $("f-co").value;
+    const items = data.feed.filter((c) =>
+      (!co || c.co === co) && (!q || c.title.toLowerCase().includes(q)) &&
+      (filter === "all" || (filter === "flag" && c.size !== "noise") || (filter === c.dir) || (filter === "scored" && c.z != null)));
+    $("calls").innerHTML = items.slice(0, shown).map((c) => {
+      const arrow = c.size === "noise" ? "•" : c.dir === "up" ? "▲" : c.dir === "down" ? "▼" : "•";
+      const size = { noise: "No move", notable: "Notable", big: "Big" }[c.size];
+      const h = hit(c);
+      const out = h == null ? `<span class="out pending">Pending</span>`
+        : `<span class="out ${h ? "ok" : "no"}">${h ? "✓" : "✗"} ${c.z > 0 ? "+" : ""}${c.z.toFixed(1)}× normal</span>`;
+      return `<li class="call">
+        <div class="c-meta"><b>${esc(c.co)}</b><span>${new Date(c.t).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC</span></div>
+        <div class="c-body"><a href="${esc(c.url)}" rel="noopener" target="_blank">${esc(c.title)}</a><span class="why">${esc(c.why)}${c.src ? " · " + esc(c.src) : ""}</span></div>
+        <div class="c-call ${c.size === "noise" ? "quiet" : c.dir}"><span>${arrow} ${size}</span><small>${Math.round(c.conf * 100)}% sure</small></div>
+        <div class="c-out">${out}</div>
+      </li>`;
+    }).join("") || `<li class="call empty">No headlines match these filters yet.</li>`;
+    $("more").hidden = items.length <= shown;
+  }
+
+  function renderScore() {
+    const s = data.score?.[sample];
+    const t = $("score-table");
+    if (!s || !s.llm?.n) {
+      t.innerHTML = `<tbody><tr><td class="pending">The first company-days are scored after tonight's close (21:43 UTC).</td></tr></tbody>`;
+      return;
+    }
+    const cols = [["llm", "AI (Gemini)"], ["keyword_baseline", "Keyword list"], ["always_no_move", "Always “no move”"]];
+    const rows = [
+      ["When it calls a move, the stock moves", "move_precision"],
+      ["Of the days that moved, how many it called", "move_recall"],
+      ["Right direction, on days that moved", "direction_accuracy_on_moves"],
+      ["Size bucket exactly right", "size_accuracy"],
+    ];
+    const best = (k) => Math.max(...cols.map(([c]) => s[c][k] ?? -1));
+    t.innerHTML = `<thead><tr><th></th>${cols.map(([, n]) => `<th class="num">${n}</th>`).join("")}</tr></thead><tbody>` +
+      rows.map(([label, k]) => `<tr><td>${label}</td>${cols.map(([c]) => {
+        const v = s[c][k];
+        return `<td class="num">${v != null && v === best(k) ? "<b>" + pct(v) + "</b>" : pct(v)}</td>`;
+      }).join("")}</tr>`).join("") +
+      `<tr><td>Company-days</td>${cols.map(([c]) => `<td class="num">${fmt(s[c].n)}</td>`).join("")}</tr></tbody>`;
+  }
+
+  function wire() {
+    const cos = [...new Set(data.feed.map((c) => c.co))].sort();
+    $("f-co").insertAdjacentHTML("beforeend", cos.map((c) => `<option>${esc(c)}</option>`).join(""));
+    $("f-q").addEventListener("input", () => { shown = 20; renderFeed(); });
+    $("f-co").addEventListener("change", () => { shown = 20; renderFeed(); });
+    $("f-chips").addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      filter = b.dataset.f; shown = 20;
+      $("f-chips").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      renderFeed();
+    });
+    $("s-sample").addEventListener("click", (e) => {
+      const b = e.target.closest("button"); if (!b) return;
+      sample = b.dataset.s;
+      $("s-sample").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+      renderScore();
+    });
+    $("more").addEventListener("click", () => { shown += 20; renderFeed(); });
+  }
+
+  // Highlight the section being read in the sticky menu
+  const links = [...document.querySelectorAll(".subnav a")];
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) links.forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
+  }), { rootMargin: "-30% 0px -60% 0px" });
+  links.forEach((a) => io.observe(document.querySelector(a.getAttribute("href"))));
+
+  fetch(SRC, { cache: "no-cache" })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((d) => { data = d; renderTop(); wire(); renderFeed(); renderScore(); })
+    .catch(() => {
+      $("calls").innerHTML = `<li class="call empty">The live data could not be loaded. It is all on <a href="https://github.com/sagonz126/news-triage">GitHub</a>.</li>`;
+      $("more").hidden = true;
+    });
+})();
+</script>
+</body>
+</html>
