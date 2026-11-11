@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event book | Saul González</title>
+  <meta name="description" content="Probabilities written before company results, compared with what the options market priced, and scored after.">
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+  <link rel="stylesheet" href="../style.css?v=20261111a">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="../index.html">saul<span>.</span>gonzález</a>
+    <nav aria-label="Main">
+      <a href="../index.html#journey">About</a>
+      <a href="../index.html#research">Research</a>
+      <a class="btn" href="../index.html#contact">Get in touch</a>
+    </nav>
+  </header>
+</div>
+
+<main class="wrap narrow">
+  <a class="back" href="../index.html#research">Back to research</a>
+
+  <div class="p-head">
+    <span class="tag gold">Live</span>
+    <h1>How good are my calls before earnings?</h1>
+    <p class="lead">Before a company reports, I write down probabilities for what will happen and compare them with what the options market prices. After the release, I score every call, right or wrong. The point is the process: if I am wrong, the reasoning should still have been sound.</p>
+  </div>
+
+  <div class="p-meta">
+    <div><b>2 open</b>Richemont and Rémy Cointreau</div>
+    <div><b>0 scored</b>Calls with a result</div>
+    <div><b>Brier score</b>How I score probabilities</div>
+  </div>
+
+  <section class="block" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <p><b>Before the release</b> I publish four things: the move the options price for the day, how the stock moved on past results days, the evidence for and against, and a probability for each question. Every page is committed to a public GitHub repository, so the time stamp shows it was written beforehand.</p>
+    <p><b>After the release</b> each probability gets a Brier score: the squared gap between my probability and what happened (1 if it happened, 0 if not). Zero is perfect, and always saying 50% scores 0.25. Below 0.25 means the calls added something.</p>
+  </section>
+
+  <section class="block" aria-labelledby="cfr-h">
+    <span class="tag gold">Open call, written 11 Nov 2026</span>
+    <h2 id="cfr-h" style="margin-top:14px">Richemont, half-year results, 13 November 2026</h2>
+    <p>Richemont owns Cartier and Van Cleef &amp; Arpels. Jewellery is about three quarters of sales. The results come out at 07:00 CET on Friday 13 November. The shares traded at about CHF 175 on 11 November (SIX Swiss Exchange, ticker CFR).</p>
+
+    <div class="answer">
+      <div>
+        <p class="label">What the options price</p>
+        <p class="value">A move of about 6.3% on the day.</p>
+      </div>
+      <div>
+        <p class="label">What history says</p>
+        <p class="value">6.9% on average on November results days. Fairly priced, so no volatility trade.</p>
+      </div>
+    </div>
+
+    <h3 class="sub-h">What the market prices</h3>
+    <p>Richemont has a weekly option that expires on Friday 13 November, the results day itself, so its price is almost all about the event. The at-the-money straddle cost about CHF 11 on 11 November, or 6.3% of the share price (between 5.0% and 7.6% given the bid-ask spread, on delayed quotes).</p>
+
+    <h3 class="sub-h">What history says</h3>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Results days, 2022 to 2026</th><th class="num">Average absolute move</th></tr></thead>
+        <tbody>
+          <tr><td>All 15 results days</td><td class="num">6.5%</td></tr>
+          <tr><td>November half-year results (+11.1%, −5.0%, −6.4%, +4.9%)</td><td class="num">6.9%</td></tr>
+          <tr><td>Results days since 2025</td><td class="num">6.0%</td></tr>
+          <tr><td>A normal day</td><td class="num">1.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Unlike some companies, Richemont's half-year results are real news: second-quarter sales and the margins come out at the same time. A 6 to 7% move is normal, and the options price about that.</p>
+
+    <h3 class="sub-h">The evidence</h3>
+    <p><b>For a strong quarter.</b> Richemont beat sales expectations at each of its last four updates; in the first quarter sales grew 20% at constant exchange rates against about 11% expected. Hong Kong is where it shows most: retail sales of jewellery and watches rose 19.7% in July, 11.9% in August and 20.3% in September. From my own time in Hong Kong, the queues outside Chow Tai Fook and the European jewellers were constant. Chinese buyers want both: local gold brands for tradition, and European maisons such as Van Cleef and Cartier to show wealth and taste. Gold averaged $4,262 an ounce in July to September, 23% higher than a year earlier, which also lifts the price of each piece.</p>
+    <p><b>Against.</b> The comparison is harder: sales grew 14% in the second quarter last year, against 6% in the first. Peers slowed: LVMH's watches and jewellery grew 6% in July to September, and Hermès said Greater China dipped. Swiss watch exports to China fell 14% in September. On margins, higher gold prices raise the cost of every piece, and US tariffs on Swiss goods now apply at 15% for the whole half-year. In the second half of last year the operating margin was about 18%, against 22.2% in the first half.</p>
+    <p><b>Wild card.</b> Richemont is reported to be in talks to join the consortium bidding for De Beers. Investors may not like a jeweller putting money into diamond mining.</p>
+
+    <h3 class="sub-h">My probabilities</h3>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Question</th><th class="num">Probability</th><th>Reasoning</th></tr></thead>
+        <tbody>
+          <tr><td>Second-quarter sales grow more than 13% at constant exchange rates</td><td class="num"><b>65%</b></td><td>Track record of beats and the Hong Kong data outweigh the harder comparison and slower peers. The 13% is one broker's estimate (Jefferies), not a formal consensus.</td></tr>
+          <tr><td>Half-year operating margin above last year's 22.2%</td><td class="num"><b>40%</b></td><td>Gold costs are up about 23% and tariffs apply all half-year. Strong sales growth spreads fixed costs, but probably not enough.</td></tr>
+          <tr><td>Shares close higher on Friday</td><td class="num"><b>58%</b></td><td>The stock rose on 10 of the last 15 results days and on 3 of the 4 recent sales beats. 65% × 75% + 35% × 25% ≈ 58%, held below the 67% base rate because of margin and De Beers risk.</td></tr>
+          <tr><td>The move is larger than the 6.3% priced</td><td class="num"><b>45%</b></td><td>Past results days beat 6.3% in 7 of 15 cases. If the options are fairly priced, the chance is about 42%, because the typical move is smaller than the average. No edge either way.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-h">What would prove me wrong</h3>
+    <p>Second-quarter growth below 10%, a drop in Hong Kong and Macau after the strong summer data, or a gross margin that holds up despite gold, which would mean price increases did more than I assume.</p>
+
+    <h3 class="sub-h">Result</h3>
+    <p class="pending">To be added after 13 November: actual figures, the move on the day, and a Brier score for each probability.</p>
+  </section>
+
+  <section class="block" aria-labelledby="next-h">
+    <h2 id="next-h">Coming up</h2>
+    <p>Rémy Cointreau on 25 November: an open call, written on 7 November, in the <a href="remy-cointreau.html">full pitch</a>. Then Richemont's third-quarter sales on 14 January and H&amp;M on 28 January.</p>
+    <p class="pending">Sources: company releases (Richemont Q1 FY27, H1 FY26 and FY26), Hong Kong Census and Statistics Department via news.gov.hk and The Standard, LVMH and Hermès third-quarter releases via FashionUnited, Federation of the Swiss Watch Industry via cash.ch, World Gold Council via APA, Ad-hoc-news (6 Nov 2026). Prices and option quotes: Interactive Brokers, delayed.</p>
+  </section>
+
+  <footer>© 2026 Saul González. Nothing on this site is investment advice.</footer>
+</main>
+</body>
+</html>

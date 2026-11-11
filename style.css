@@ -115,6 +115,8 @@ footer { color: var(--muted); font-size: 14px; padding: 0 0 40px; }
 .block { padding: 0 0 52px; }
 .block h2 { font-family: var(--display); font-weight: 700; font-size: 28px; letter-spacing: -.02em; margin: 0 0 12px; }
 .block p, .block li { max-width: 66ch; }
+.sub-h { font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; margin: 30px 0 8px; }
+.block .answer { margin: 22px 0 8px; }
 .pending { color: #6a7893; font-style: italic; }
 
 .table-card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 8px 24px; overflow-x: auto; }
@@ -150,3 +152,5 @@ th { font-size: 13px; font-weight: 600; color: var(--muted); }
   html { scroll-behavior: auto; }
   .card { transition: none; }
 }
+
+.num:not(:last-child) { padding-right: 20px; }
