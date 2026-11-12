@@ -7,7 +7,7 @@
   <meta name="description" content="A live experiment: a free AI labels headlines about 40 large European companies, and every label is scored against what the shares actually did.">
   <link rel="preconnect" href="https://rsms.me/">
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-  <link rel="stylesheet" href="../style.css?v=20261111b">
+  <link rel="stylesheet" href="../style.css?v=20261112a">
 </head>
 <body>
 <div class="wrap">
@@ -77,7 +77,7 @@
 
   <section id="feed" class="block">
     <h2>Live feed</h2>
-    <p>The latest headlines the AI judged relevant, newest first. Outcomes appear once the stock's next close is in.</p>
+    <p>Every headline the AI judged relevant, grouped by the trading day it should move. Open a day to see its calls; outcomes appear once that day's close is in. Each headline is checked against the stock's whole day, so a routine headline on a day the stock moved for some other reason counts as a miss. The scorecard below avoids that by scoring each company-day once.</p>
     <div class="filters" role="group" aria-label="Filter the feed">
       <input type="search" id="f-q" placeholder="Search headlines" aria-label="Search headlines">
       <select id="f-co" aria-label="Company"><option value="">All companies</option></select>
@@ -89,8 +89,7 @@
         <button type="button" data-f="scored" aria-pressed="false">Scored</button>
       </div>
     </div>
-    <ul class="calls" id="calls"></ul>
-    <button type="button" class="btn ghost more-btn" id="more">Show more</button>
+    <div class="days" id="days"></div>
   </section>
 
   <section id="scorecard" class="block">
@@ -117,12 +116,14 @@
 
 <script>
 (() => {
-  const SRC = "https://raw.githubusercontent.com/sagonz126/news-triage/main/results/site.json";
+  const BASE = "https://raw.githubusercontent.com/sagonz126/news-triage/main/results/";
+  const SRC = BASE + "site.json";
+  const PAGE = 15, cache = {};
   const $ = (id) => document.getElementById(id);
   const fmt = (n) => (n ?? 0).toLocaleString("en-GB");
   const pct = (x) => (x == null ? "n/a" : Math.round(x * 100) + "%");
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  let data, shown = 20, filter = "all", sample = "all";
+  let data, filter = "all", sample = "all";
 
   function ago(iso) {
     const m = Math.round((Date.now() - new Date(iso)) / 60000);
@@ -171,25 +172,67 @@
     $("bias").innerHTML = bar("AI predicts", data.bias.predicted) + bar("What happened", data.bias.actual);
   }
 
-  function renderFeed() {
+  const callHtml = (c) => {
+    const arrow = c.size === "noise" ? "•" : c.dir === "up" ? "▲" : c.dir === "down" ? "▼" : "•";
+    const size = { noise: "No move", notable: "Notable", big: "Big" }[c.size];
+    const h = hit(c);
+    const out = h == null ? `<span class="out pending">Pending</span>`
+      : `<span class="out ${h ? "ok" : "no"}">${h ? "✓" : "✗"} ${c.z > 0 ? "+" : ""}${c.z.toFixed(2)}× normal</span>`;
+    return `<li class="call">
+      <div class="c-meta"><b>${esc(c.co)}</b><span>${new Date(c.t).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC</span></div>
+      <div class="c-body"><a href="${esc(c.url)}" rel="noopener" target="_blank">${esc(c.title)}</a><span class="why">${esc(c.why)}${c.src ? " · " + esc(c.src) : ""}</span></div>
+      <div class="c-call ${c.size === "noise" ? "quiet" : c.dir}"><span>${arrow} ${size}</span><small>${Math.round(c.conf * 100)}% sure</small></div>
+      <div class="c-out">${out}</div>
+    </li>`;
+  };
+
+  const dayLabel = (d) => d === "pending" ? "Waiting for the next close"
+    : new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+
+  function renderDays() {
+    const firstScored = data.days.find((d) => d.day !== "pending")?.day;
+    $("days").innerHTML = data.days.map((d) => `
+      <details class="day" data-day="${d.day}"${d.day === firstScored ? " open" : ""}>
+        <summary>
+          <b>${dayLabel(d.day)}</b>
+          <span class="d-meta">${fmt(d.calls)} calls · ${fmt(d.flagged)} market-moving</span>
+          ${d.scored ? `<span class="d-score">AI right on ${fmt(d.hits)} of ${fmt(d.scored)}</span>` : `<span class="d-score wait">Not scored yet</span>`}
+        </summary>
+        <ul class="calls"></ul>
+        <button type="button" class="btn ghost more-btn" hidden>Show more</button>
+      </details>`).join("") || `<p class="pending">No calls yet.</p>`;
+    $("days").querySelectorAll("details.day").forEach((el) => {
+      el.shown = PAGE;
+      el.addEventListener("toggle", () => { if (el.open) renderDay(el); });
+      el.querySelector(".more-btn").addEventListener("click", () => { el.shown += PAGE * 2; renderDay(el); });
+      if (el.open) renderDay(el);
+    });
+  }
+
+  async function renderDay(el) {
+    const key = el.dataset.day, list = el.querySelector(".calls"), more = el.querySelector(".more-btn");
+    if (!cache[key]) {
+      list.innerHTML = `<li class="call empty">Loading…</li>`;
+      try {
+        const r = await fetch(BASE + "feed/" + key + ".json", { cache: "no-cache" });
+        if (!r.ok) throw new Error(r.status);
+        cache[key] = await r.json();
+      } catch (e) {
+        list.innerHTML = `<li class="call empty">This day could not be loaded. Try again in a minute.</li>`;
+        return;
+      }
+    }
     const q = $("f-q").value.trim().toLowerCase(), co = $("f-co").value;
-    const items = data.feed.filter((c) =>
+    const items = cache[key].filter((c) =>
       (!co || c.co === co) && (!q || c.title.toLowerCase().includes(q)) &&
       (filter === "all" || (filter === "flag" && c.size !== "noise") || (filter === c.dir) || (filter === "scored" && c.z != null)));
-    $("calls").innerHTML = items.slice(0, shown).map((c) => {
-      const arrow = c.size === "noise" ? "•" : c.dir === "up" ? "▲" : c.dir === "down" ? "▼" : "•";
-      const size = { noise: "No move", notable: "Notable", big: "Big" }[c.size];
-      const h = hit(c);
-      const out = h == null ? `<span class="out pending">Pending</span>`
-        : `<span class="out ${h ? "ok" : "no"}">${h ? "✓" : "✗"} ${c.z > 0 ? "+" : ""}${c.z.toFixed(1)}× normal</span>`;
-      return `<li class="call">
-        <div class="c-meta"><b>${esc(c.co)}</b><span>${new Date(c.t).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC</span></div>
-        <div class="c-body"><a href="${esc(c.url)}" rel="noopener" target="_blank">${esc(c.title)}</a><span class="why">${esc(c.why)}${c.src ? " · " + esc(c.src) : ""}</span></div>
-        <div class="c-call ${c.size === "noise" ? "quiet" : c.dir}"><span>${arrow} ${size}</span><small>${Math.round(c.conf * 100)}% sure</small></div>
-        <div class="c-out">${out}</div>
-      </li>`;
-    }).join("") || `<li class="call empty">No headlines match these filters yet.</li>`;
-    $("more").hidden = items.length <= shown;
+    list.innerHTML = items.slice(0, el.shown).map(callHtml).join("") || `<li class="call empty">No calls on this day match the filters.</li>`;
+    more.hidden = items.length <= el.shown;
+    more.textContent = `Show more (${items.length - el.shown} left)`;
+  }
+
+  function refreshOpenDays() {
+    $("days").querySelectorAll("details.day[open]").forEach((el) => { el.shown = PAGE; renderDay(el); });
   }
 
   function renderScore() {
@@ -216,15 +259,15 @@
   }
 
   function wire() {
-    const cos = [...new Set(data.feed.map((c) => c.co))].sort();
+    const cos = Object.keys(data.per_company || {}).sort();
     $("f-co").insertAdjacentHTML("beforeend", cos.map((c) => `<option>${esc(c)}</option>`).join(""));
-    $("f-q").addEventListener("input", () => { shown = 20; renderFeed(); });
-    $("f-co").addEventListener("change", () => { shown = 20; renderFeed(); });
+    $("f-q").addEventListener("input", refreshOpenDays);
+    $("f-co").addEventListener("change", refreshOpenDays);
     $("f-chips").addEventListener("click", (e) => {
       const b = e.target.closest("button"); if (!b) return;
-      filter = b.dataset.f; shown = 20;
+      filter = b.dataset.f;
       $("f-chips").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
-      renderFeed();
+      refreshOpenDays();
     });
     $("s-sample").addEventListener("click", (e) => {
       const b = e.target.closest("button"); if (!b) return;
@@ -232,7 +275,6 @@
       $("s-sample").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", x === b));
       renderScore();
     });
-    $("more").addEventListener("click", () => { shown += 20; renderFeed(); });
   }
 
   // Highlight the section being read in the sticky menu
@@ -244,10 +286,9 @@
 
   fetch(SRC, { cache: "no-cache" })
     .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then((d) => { data = d; renderTop(); wire(); renderFeed(); renderScore(); })
+    .then((d) => { data = d; renderTop(); wire(); renderDays(); renderScore(); })
     .catch(() => {
-      $("calls").innerHTML = `<li class="call empty">The live data could not be loaded. It is all on <a href="https://github.com/sagonz126/news-triage">GitHub</a>.</li>`;
-      $("more").hidden = true;
+      $("days").innerHTML = `<p class="pending">The live data could not be loaded. It is all on <a href="https://github.com/sagonz126/news-triage">GitHub</a>.</p>`;
     });
 })();
 </script>
